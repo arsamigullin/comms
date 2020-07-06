@@ -6,10 +6,12 @@ const logFileName = "log.txt";
 let files = fileApi.getFiles();
 
 function log(msg){
-    fileApi.appendLogFile(logFileName, msg);
+    fileApi.appendFile(conf.pathTo+"/"+logFileName, msg);
     console.log(msg);
 }
 
+// creates folder in ouput folder
+fileApi.createFolders();
 
 files.forEach((file)=>{
     if (!path.parse(file).ext){
@@ -30,12 +32,25 @@ files.forEach((file)=>{
         log('No old environments found');
     }
 
-    let fullFileName = "full_" + file
-    fileApi.write(envs, fullFileName)
+    let fullFileName = conf.fullFilteredFilesFolder+"/full_" + file
+    fileApi.writeJson(envs, fullFileName)
     log(`Saved ${envs.length} all the environments without old ones to ${fullFileName}`)
+
+    log('Saving file for Topology - Redeploy GA')
+    let topologyRedepEnvs = []
+    for (let env of envs){
+        topologyRedepEnvs.push(`${env.TopologyInstanceName},TRUE,FALSE,TRUE,FALSE,FALSE,FALSE`)
+    }
+    let csvFileName = conf.redeployFolder+"/"+path.parse(file).name + ".csv";
+    fileApi.writeFile(topologyRedepEnvs, csvFileName)
+    log(`Saved environments for Topology Redeploy GA in  ${csvFileName}`)
+
 
     if (envs.length<=conf.splitCount){
         log(`Split is not required for ${file}. Count of environemtns ${envs.length} is less than defined split count ${conf.splitCount}`);
+        let fileName = conf.batchFolder+"/" + file
+        fileApi.writeJson(envs, fileName)
+        log(`Saved environments in ${fileName}..`);
     } else{
         log(`Spliting environments to ${conf.splitCount} ...`);
         let appendixToFileName = 1;
@@ -45,9 +60,9 @@ files.forEach((file)=>{
         let end = envCount;
         while (start < envs.length) {
             let data = envs.slice(start, end);
-            let splitedEnvsFileName = path.parse(file).name + "_part" + appendixToFileName + path.parse(file).ext;
-            fileApi.write(data, splitedEnvsFileName)
-            log(`Saved ${data.length} environments to ${splitedEnvsFileName}..`);
+            let splitedEnvsFileName = conf.batchFolder + "/" + path.parse(file).name + "_part" + appendixToFileName + path.parse(file).ext;
+            fileApi.writeJson(data, splitedEnvsFileName)
+            log(`Saved ${data.length} environments in ${splitedEnvsFileName}..`);
             start += envCount;
             end += envCount;
             appendixToFileName+=1;

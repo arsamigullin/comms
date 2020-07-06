@@ -1,5 +1,6 @@
 const fs = require('fs')
 const conf = require('./config')
+const path = require('path');
 
 exports.read = (filename) => {
     try {
@@ -9,20 +10,50 @@ exports.read = (filename) => {
     }
 }
 
-exports.write = (data, filename) => {
+exports.writeJson = (data, filename) => {
     const jsonString = JSON.stringify(data)
     try{
-        fs.writeFileSync(conf.pathTo + "/" + filename, jsonString)
+        fs.writeFileSync(filename, jsonString)
     } catch(err){
         console.error(err);
     }
-    
+}
+
+exports.writeFile = (data, filename) => {
+    try{
+        fs.writeFileSync(filename, data.join("\r\n"))
+    } catch(err){
+        console.error(err);
+    }
 }
 
 exports.getFiles = () => {
     return fs.readdirSync(conf.pathFrom);
 }
 
-exports.appendLogFile = (filename, msg) => {
-    fs.appendFileSync(conf.pathTo + "/" + filename, msg+"\r\n")
+exports.appendFile = (filename, msg) => {
+    fs.appendFileSync(filename, msg+"\r\n")
 }
+
+exports.createFolders = () => {
+    makeFolder(conf.batchFolder)
+    makeFolder(conf.redeployFolder)
+    makeFolder(conf.fullFilteredFilesFolder)
+}
+
+function makeFolder(directory){
+    if (fs.existsSync(directory)){
+        clearFolder(directory)
+    }else{
+        fs.mkdirSync(directory);
+    }
+}
+
+function clearFolder(directory){
+    directory = __dirname + directory.slice(1, directory.length)
+    let files = fs.readdirSync(directory);
+    for (let file of files){
+        fs.unlinkSync(path.join(directory, file))
+    }
+}
+

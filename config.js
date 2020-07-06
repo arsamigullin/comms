@@ -1,4 +1,9 @@
 
-exports.pathFrom = "C:\\Users\\v-alsami\\Desktop\\notifications";
-exports.pathTo = "C:\\Users\\v-alsami\\Desktop\\notifications\\modified";
-exports.splitCount = 30;
+let input = "./input";
+let output = "./output";
+exports.pathFrom = input;
+exports.pathTo = output;
+exports.batchFolder = `${output}/BatchNotifications`;
+exports.redeployFolder = `${output}/TopologyRedeploy`;
+exports.fullFilteredFilesFolder = `${output}/FullFilteredFiles`
+exports.splitCount = 25;
