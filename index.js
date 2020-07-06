@@ -50,7 +50,7 @@ files.forEach((file)=>{
         log(`Split is not required for ${file}. Count of environemtns ${envs.length} is less than defined split count ${conf.splitCount}`);
         let fileName = conf.batchFolder+"/" + file
         fileApi.writeJson(envs, fileName)
-        log(`Saved environments in ${fileName}..`);
+        log(`Saved environments in ${fileName}`);
     } else{
         log(`Spliting environments to ${conf.splitCount} ...`);
         let appendixToFileName = 1;
@@ -62,7 +62,7 @@ files.forEach((file)=>{
             let data = envs.slice(start, end);
             let splitedEnvsFileName = conf.batchFolder + "/" + path.parse(file).name + "_part" + appendixToFileName + path.parse(file).ext;
             fileApi.writeJson(data, splitedEnvsFileName)
-            log(`Saved ${data.length} environments in ${splitedEnvsFileName}..`);
+            log(`Saved ${data.length} environments in ${splitedEnvsFileName}`);
             start += envCount;
             end += envCount;
             appendixToFileName+=1;
