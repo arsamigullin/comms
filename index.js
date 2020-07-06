@@ -34,7 +34,7 @@ files.forEach((file)=>{
 
     let fullFileName = conf.fullFilteredFilesFolder+"/full_" + file
     fileApi.writeJson(envs, fullFileName)
-    log(`Saved ${envs.length} all the environments without old ones to ${fullFileName}`)
+    log(`Saved all ${envs.length} the environments without old ones to ${fullFileName}`)
 
     log('Saving file for Topology - Redeploy GA')
     let topologyRedepEnvs = []
